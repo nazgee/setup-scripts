@@ -25,9 +25,10 @@
 # User specific vars like proxy servers
 ###############################################################################
 
-#PROXYHOST=wwwgate.ti.com
-#PROXYPORT=80
-PROXYHOST=""
+PROXYHOST="http://wro-proxy.eu.tieto.com"
+#PROXYHOST="http://us000461.eu.tieto.com"
+PROXYPORT=8080
+#PROXYHOST=""
 
 ###############################################################################
 # OE_BASE    - The root directory for all OE sources and development.
@@ -74,7 +75,7 @@ BBFILES ?= "${OE_SOURCE_DIR}/openembedded-core/meta/recipes-*/*/*.bb"
 TMPDIR = "${OE_BUILD_TMPDIR}"
 
 # Go through the Firewall
-#HTTP_PROXY        = "http://${PROXYHOST}:${PROXYPORT}/"
+HTTP_PROXY        = "http://${PROXYHOST}:${PROXYPORT}/"
 
 _EOF
 fi
@@ -310,9 +311,11 @@ function config_git_proxy()
         mkdir -p ${GIT_CONFIG_DIR}
         cat > ${GIT_CONFIG_DIR}/git-proxy.sh <<_EOF
 if [ -x /bin/env ] ; then
-    exec /bin/env corkscrew ${PROXYHOST} ${PROXYPORT} \$*
+    #exec /bin/env corkscrew ${PROXYHOST} ${PROXYPORT} \$*
+    exec /bin/env socat STDIO PROXY:proxy.global.sonyericsson.net:\$1:\$2,proxyport=8080
 else
-    exec /usr/bin/env corkscrew ${PROXYHOST} ${PROXYPORT} \$*
+    #exec /usr/bin/env corkscrew ${PROXYHOST} ${PROXYPORT} \$*
+    exec /usr/bin/env socat STDIO PROXY:proxy.global.sonyericsson.net:\$1:\$2,proxyport=8080
 fi
 _EOF
         chmod +x ${GIT_CONFIG_DIR}/git-proxy.sh
